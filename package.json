@@ -1,0 +1,16 @@
+{
+  "name": "ya-search-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager ."
+  },
+  "author": "Nikita Kiose",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^3.0.8",
+    "electron-packager": "^12.1.2"
+  }
+}
