@@ -19,6 +19,7 @@ const ya = 'https://www.yandex.ru/'
 const search = 'search/?lr=213&text='
 
 let data = []
+let positions = ''
 
 let position = 0
 
@@ -33,20 +34,26 @@ webview.addEventListener('ipc-message', (event) => {
                 webview.loadURL(ya + search + currentq + '&p=' + page.value)
             } else {
                 console.log(addressbar.value + ' :: NO :: ' + currentq)
+                positions = positions + 'no\n'
                 data.push('<TR><TD>' + addressbar.value + '</TD>' + '<TD>no</TD>' + '<TD>' + currentq + '</TD>' + '</TR>')
                 nextQuery()
             }
         } else if (event.channel == 'done') {
             position += event.args[0]
             console.log(addressbar.value + ' :: ', position + 1,' :: ' + currentq)
+            positions = positions + Number(position + 1) + '\n'
             data.push('<TR><TD>' + addressbar.value + '</TD>' + '<TD>' + Number(position + 1) + '</TD>' + '<TD>' + currentq + '</TD>' + '</TR>')
             nextQuery()
         } else if (event.channel == 'noMatches') {
             console.log(addressbar.value + ' :: NO :: ' + currentq)
+            positions = positions + 'no\n'
             data.push('<TR><TD>' + addressbar.value + '</TD>' + '<TD>no</TD>' + '<TD>' + currentq + '</TD>' + '</TR>')
             nextQuery()
         }
     } else {
+        navigator.clipboard.writeText(positions).then(() => {
+            console.log('VALUE COPIED')
+        })
         exportToCsv()
         resetSearch()
     }
@@ -67,7 +74,7 @@ resetSearch = () => {
 }
 
 webview.addEventListener('dom-ready', (event) => {
-    webview.openDevTools()
+    //webview.openDevTools()
     if (isSearching) {
         webview.send('search', addressbar.value)
     }
