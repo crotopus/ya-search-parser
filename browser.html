@@ -11,19 +11,28 @@
             overflow-y: hidden;
         }
 
+        label {
+            position: relative;
+            left: 8px;
+        }
+
         .navbar {
-            width: calc(100%);
-            height: calc(24px);
+            width: 300px;
+            height: 100%;
+        }
+
+        .queryinput_container {
+            height: calc(100% - 39px - 57px);
         }
 
         #addressbar {
-            width: 250px;
-            margin-left: 8px;
+            width: 280px;
         }
 
         #queryinput {
-            width: 325px;
-            margin-left: 8px;
+            width: 280px;
+            height: calc(100% - 15px);
+            resize: none;
         }
 
         #go {
@@ -40,8 +49,17 @@
             margin-left: 8px;
         }
 
+        .right {
+            width: 50px;
+            position: absolute;
+            left: 230px;
+        }
+
         .content {
-            width: calc(100%);
+            position: absolute;
+            left: 300px;
+            top: 0;
+            width: calc(100% - 300px);
             height: calc(100% - 24px);
         }
     </style>
@@ -49,15 +67,36 @@
 
 <body>
     <div class="navbar">
-        <input id="queryinput">
-        <input id="addressbar">
-        <button id="go">GO</button>
-        <input id="page" type="number" readonly>
-        <input id="resultslimit" type="number">
+        <div>
+            <center>
+                <label for="addressbar">Сайт:</label>
+                <br>
+                <input id="addressbar">
+            </center>
+        </div>
+        
+        <div>
+            <center>
+                <button id="go">Найти</button>
+            </center>
+            <label for="page">Страница:</label>
+            <input class="right" id="page" type="number">
+            <br>
+            <label for="resultslimit">Макс. позиция:</label>
+            <input class="right" id="resultslimit" type="number">
+        </div>
+
+        <div class="queryinput_container">
+            <center style='height: calc(100% - 17px);'>
+                <label for="queryinput">Запросы:</label>
+                <br>
+                <textarea id="queryinput"></textarea>
+            </center>
+        </div>
     </div>
-    <div class='content'>
+    <span class='content'>
         <webview style='height: 100%;' id='browser' src='http://www.yandex.ru' preload='./inject.js' autosize></webview>
-    </div>
+    </span>
 
     <script src="./browser.js"></script>
 </body>

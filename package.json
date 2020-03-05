@@ -1,7 +1,6 @@
 {
   "name": "ya-search-parser",
   "version": "1.0.0",
-  "description": "",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -10,7 +9,16 @@
   "author": "Nikita Kiose",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^3.0.8",
+    "electron": "^3.1.13",
     "electron-packager": "^12.1.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crotopus/ya-search-parser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/crotopus/ya-search-parser/issues"
+  },
+  "homepage": "https://github.com/crotopus/ya-search-parser#readme",
+  "description": ""
 }

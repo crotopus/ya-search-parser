@@ -11,10 +11,10 @@ app.once('ready', (event) => {
     top.win = new BrowserWindow({
         title: 'Ya Search Parser',
         icon: path.join(__dirname, 'logo.ico'),
-        width: 800,
-        height: 600,
-        minWidth: 800,
-        minHeight: 600,
+        width: 960,
+        height: 480,
+        minWidth: 960,
+        minHeight: 480,
         minimizable: false,
         show: false
     })
@@ -37,12 +37,12 @@ app.once('ready', (event) => {
 
     const mainMenu = Menu.buildFromTemplate([
         { label: 'Файл', submenu: [
-            {
+            /*{
                 label: 'Запустить',
                 click: (item, window, event) => {
 
                 }
-            },
+            },*/
             {
                 label: 'Выход',
                 accelerator: process.platform == 'darwin' ? 'Command+Q' :
@@ -60,9 +60,9 @@ app.once('ready', (event) => {
         { label: 'Открыть', click: (item, window, event) => {
             top.win.show()
         }},
-        { label: 'Приостановить', click: (item, window, event) => {
+        /*{ label: 'Приостановить', click: (item, window, event) => {
             
-        }},
+        }},*/
         { label: 'Выход', type: 'normal', role: 'quit'}
     ])
     top.tray.setToolTip('Ya Search Parser')
