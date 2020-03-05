@@ -11,8 +11,8 @@ ipcRenderer.on('search', (event, site) => {
     const res = document.querySelectorAll('li.serp-item')
     let i = 0
     for (let node of res) {
-        if (node.attributes.length < 6 && node.childNodes[0].className != 'composite composite_gap_s composite_separated_no') {
-            if (node.querySelector('a>b').innerHTML.toLowerCase() == site.toLowerCase()) {
+        if (node.attributes.length > 2 && node.attributes.length < 6 && node.childNodes[0].className != 'composite composite_gap_s composite_separated_no') {
+            if (node.querySelector('a>b') != undefined && node.querySelector('a>b').innerHTML.toLowerCase() == site.toLowerCase()) {
                 ipcRenderer.sendToHost('done', i)
                 break
             }

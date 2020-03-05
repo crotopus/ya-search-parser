@@ -34,5 +34,10 @@ typings/
 
 *.code-workspace
 
+# Сборки
+
 ya-search-parser-win32-x64/
 *.zip
+
+# Отчеты
+xml/
