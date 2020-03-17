@@ -6,7 +6,7 @@ ipcRenderer.on('search', (event, site) => {
     }
 
     // Скрываем шапку с поисковой строкой
-    document.querySelector('div.serp-header__wrapper').innerHTML = ''
+    //document.querySelector('div.serp-header__wrapper').innerHTML = ''
 
     const res = document.querySelectorAll('li.serp-item')
     let i = 0
