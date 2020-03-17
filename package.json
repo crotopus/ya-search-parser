@@ -22,6 +22,7 @@
   "homepage": "https://github.com/crotopus/ya-search-parser#readme",
   "description": "",
   "dependencies": {
+    "request": "^2.88.2",
     "update-electron-app": "^1.5.0"
   }
 }

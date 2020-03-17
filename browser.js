@@ -1,6 +1,8 @@
 const electron = require('electron')
 const {ipcRenderer} = electron
 
+const request = require('request')
+
 const path = require('path')
 const fs = require('fs')
 
@@ -18,19 +20,19 @@ const ya = 'https://www.yandex.ru/'
 const search = 'search/?lr=213&text='
 
 let data = []
-
-let position = 0
+let resNum = 0
 
 let isSearching
 
 webview.addEventListener('ipc-message', (event) => {
     if (Number(page.value) < Number(resultslimit.value) && currentq != undefined) {
         if (event.channel == 'emptyPage') {
-            currentq = query.pop()
+            
         } else if (event.channel == 'savePage') {
-            //console.log(event.args[0])
             data = data.concat(event.args[0])
             page.value = Number(page.value) + 1
+        } else if (event.channel == 'saveResNum') {
+            resNum = event.args[0]
         }
         webview.loadURL(ya + search + currentq + '&p=' + page.value)
     } else {
@@ -38,69 +40,65 @@ webview.addEventListener('ipc-message', (event) => {
         isSearching = false
         page.value = 0
         // отправить данные на сервер
-        // CODE...
+        if (data != []) {
+            request.post('http://localhost:8000/results', {
+                json: {
+                    queryName: currentq,
+                    date: getCurrentDate(),
+                    results: resNum,
+                    urls: data
+                }
+            },
+            (error, res, body) => {
+                if (error) {
+                    console.log(error)
+                    return
+                }
+                console.log(`statusCode: ${res.statusCode}`)
+                console.log(body)
+            })
+        }        
         data = []
+        resNum = 0
+        currentq = null
     }
-
-    // LEGACY CODE
-    /*
-    if (query.length >= 0 && currentq != undefined) {
-        if (event.channel == 'nextPage') {
-            position += event.args[0]
-            page.value = Number(page.value) + 1
-            if (position < resultslimit.value - 1) {
-                webview.loadURL(ya + search + currentq + '&p=' + page.value)
-            } else {
-                console.log(addressbar.value + ' :: NO :: ' + currentq)
-                data.push('<TR><TD>' + addressbar.value + '</TD>' + '<TD>no</TD>' + '<TD>' + currentq + '</TD>' + '</TR>')
-                nextQuery()
-            }
-        } else if (event.channel == 'done') {
-            position += event.args[0]
-            console.log(addressbar.value + ' :: ', position + 1,' :: ' + currentq)
-            data.push('<TR><TD>' + addressbar.value + '</TD>' + '<TD>' + Number(position + 1) + '</TD>' + '<TD>' + currentq + '</TD>' + '</TR>')
-            nextQuery()
-        } else if (event.channel == 'noMatches') {
-            console.log(addressbar.value + ' :: NO :: ' + currentq)
-            data.push('<TR><TD>' + addressbar.value + '</TD>' + '<TD>no</TD>' + '<TD>' + currentq + '</TD>' + '</TR>')
-            nextQuery()
-        }
-    } else {
-        exportToCsv()
-        resetSearch()
-    }
-    */
 })
-
-nextQuery = () => {
-    //position = 0
-    page.value = 0
-    currentq = query.pop()
-    //webview.loadURL(ya + search + currentq + '&p=' + page.value)
-}
-
-resetSearch = () => {
-    position = 0
-    page.value = 0
-    isSearching = false
-}
 
 webview.addEventListener('dom-ready', (event) => {
     webview.openDevTools()
+    if (page.value == 0) {
+        webview.send('getResultsNumber')
+    }
     if (isSearching) {
-        webview.send('search', addressbar.value)
+        webview.send('search')
     }
 })
+
+getCurrentDate = () => {
+    return Number(new Date())
+}
 
 startSearch = () => {
     isSearching = true
 
-    currentq = queryinput.value
+    // Захват запроса из строки
+    //currentq = queryinput.value
 
-    webview.loadURL(ya + search + currentq)
+    request.get('http://localhost:8000/results/24', {}, 
+    (error, res, body) => {
+        if (error) {
+            console.log(error)
+            return
+        }
+        console.log(`statusCode: ${res.statusCode}`)
+        if (!body.includes('{"err"')) {
+            currentq = body
+            webview.loadURL(ya + search + currentq)
+        }
+    })
 }
 
-addressbar.onkeyup = (ev) => {
+queryinput.onkeyup = (ev) => {
     if (ev.key == 'Enter') {
         startSearch()
     }
