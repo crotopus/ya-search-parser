@@ -4,8 +4,6 @@ const path = require('path')
 
 const {app, BrowserWindow, Menu, ipcMain, Tray} = electron
 
-require('update-electron-app')()
-
 let top = {}
 
 app.once('ready', (event) => {

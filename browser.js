@@ -98,9 +98,9 @@ exportToCsv = () => {
     fs.writeFile(path.join(__dirname, 'xml/report-'
             + currentdate.getFullYear() + "-" 
             + ((currentdate.getMonth() + 1 < 10) ? '0' + Number(currentdate.getMonth() + 1) : Number(currentdate.getMonth() + 1)) + "-" 
-            + ((currentdate.getDate() + 1 < 10) ? '0' + Number(currentdate.getDate()) : Number(currentdate.getDate())) + "-" 
-            + ((currentdate.getHours() + 1 < 10) ? '0' + Number(currentdate.getHours()) : Number(currentdate.getHours())) + "-" 
-            + ((currentdate.getMinutes() + 1 < 10) ? '0' + Number(currentdate.getMinutes()) : Number(currentdate.getMinutes())) + '.xml'),
+            + ((currentdate.getDate() + 1 < 10) ? '0' + Number(currentdate.getDate() + 1) : Number(currentdate.getDate() + 1)) + "-" 
+            + ((currentdate.getHours() + 1 < 10) ? '0' + Number(currentdate.getHours() + 1) : Number(currentdate.getHours() + 1)) + "-" 
+            + ((currentdate.getMinutes() + 1 < 10) ? '0' + Number(currentdate.getMinutes() + 1) : Number(currentdate.getMinutes() + 1)) + '.xml'),
         csvContent, (err) => {
         if(err) {
             return console.log(err)
