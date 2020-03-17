@@ -11,9 +11,8 @@ const go = document.getElementById('go')
 const page = document.getElementById('page')
 const resultslimit = document.getElementById('resultslimit')
 
-let query                 // Список строк с запросами
 let currentq              // Строка с текущим запросом
-resultslimit.value = 200  // Максимальная позиция при поиске по умолчанию
+resultslimit.value = 20   // Максимальная страница
 
 const ya = 'https://www.yandex.ru/'
 const search = 'search/?lr=213&text='
@@ -25,6 +24,26 @@ let position = 0
 let isSearching
 
 webview.addEventListener('ipc-message', (event) => {
+    if (Number(page.value) < Number(resultslimit.value) && currentq != undefined) {
+        if (event.channel == 'emptyPage') {
+            currentq = query.pop()
+        } else if (event.channel == 'savePage') {
+            //console.log(event.args[0])
+            data = data.concat(event.args[0])
+            page.value = Number(page.value) + 1
+        }
+        webview.loadURL(ya + search + currentq + '&p=' + page.value)
+    } else {
+        console.log(data)
+        isSearching = false
+        page.value = 0
+        // отправить данные на сервер
+        // CODE...
+        data = []
+    }
+
+    // LEGACY CODE
+    /*
     if (query.length >= 0 && currentq != undefined) {
         if (event.channel == 'nextPage') {
             position += event.args[0]
@@ -50,14 +69,14 @@ webview.addEventListener('ipc-message', (event) => {
         exportToCsv()
         resetSearch()
     }
-    
+    */
 })
 
 nextQuery = () => {
-    position = 0
+    //position = 0
     page.value = 0
     currentq = query.pop()
-    webview.loadURL(ya + search + currentq + '&p=' + page.value)
+    //webview.loadURL(ya + search + currentq + '&p=' + page.value)
 }
 
 resetSearch = () => {
@@ -67,7 +86,7 @@ resetSearch = () => {
 }
 
 webview.addEventListener('dom-ready', (event) => {
-    //webview.openDevTools()
+    webview.openDevTools()
     if (isSearching) {
         webview.send('search', addressbar.value)
     }
@@ -76,8 +95,7 @@ webview.addEventListener('dom-ready', (event) => {
 startSearch = () => {
     isSearching = true
 
-    query = queryinput.value.split('\n').reverse()
-    currentq = query.pop()
+    currentq = queryinput.value
 
     webview.loadURL(ya + search + currentq)
 }
