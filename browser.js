@@ -176,6 +176,7 @@ sendResults = () => {
                 queryName: currentq,
                 date: getCurrentDate(),
                 results: resNum,
+                views: viewsNum,
                 urls: data
             }
         },
