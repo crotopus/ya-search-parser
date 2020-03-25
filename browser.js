@@ -29,6 +29,8 @@ let viewsNum = 0
 let isSearching
 let onPause
 
+let isEmptyQuery = false
+
 webview.addEventListener('ipc-message', (event) => {
     if (Number(page.value) < Number(resultslimit.value) && currentq != undefined) {
         if (event.channel == 'emptyPage') {
@@ -50,6 +52,8 @@ webview.addEventListener('ipc-message', (event) => {
             console.log('res num recieved ', resNum)
         } else if (event.channel == 'noViewsNum') {
             sendEmptyQuery()
+        } else if (event.channel == 'noResNum') {
+            console.log('no res number')
         }
     } else {
         console.log(data)
@@ -77,6 +81,18 @@ getCurrentDate = () => {
     return Number(new Date())
 }
 
+getEmptyQuery = (toRun) => {
+    request.get('http://localhost:8000/query/empty', {}, 
+    (error, res, body) => {
+        if (error) {
+            console.log(error)
+            return
+        }
+        console.log(`statusCode: ${res.statusCode}`)
+        toRun(body)
+    })
+}
+
 getQueryLatest = (toRun) => {
     request.get('http://localhost:8000/query/latest', {}, 
     (error, res, body) => {
@@ -92,10 +108,16 @@ getQueryLatest = (toRun) => {
 startSearch = () => {
     page.value = 0
 
-    getQueryLatest((body) => {
+    getQueryLatest(body => {
         if (!body.includes('{"err"')) {
             currentq = body
             webview.loadURL(ya + search + currentq)
+        } else if (body.includes('No queries to process')) {
+            getEmptyQuery(body2 => {
+                currentq = body2
+                webview.loadURL(ya + search + currentq)
+                isEmptyQuery = true
+            })
         } else if (!onPause) {
             setTimeout(startSearch, searchInterval)
         }
@@ -120,10 +142,34 @@ sendQuery = () => {
 }
 
 sendEmptyQuery = () => {
-    
+    const jsonObj = {
+        name: currentq,
+        lastDate: getCurrentDate()
+    }
+    request.put('http://localhost:8000/query/empty', {json: jsonObj},
+    (error, res, body) => {
+        if (error) {
+            console.log(error)
+            return
+        }
+        console.log(`statusCode: ${res.statusCode}`)
+    })
 }
 
 sendResults = () => {
+    if (isEmptyQuery) {
+        const jsonObj = {
+            name: currentq,
+        }
+        request.put('http://localhost:8000/query/non-empty', {json: jsonObj},
+        (error, res, body) => {
+            if (error) {
+                console.log(error)
+                return
+            }
+            console.log(`statusCode: ${res.statusCode}`)
+        })
+    }
     if (data != []) {
         request.post('http://localhost:8000/results', {
             json: {
