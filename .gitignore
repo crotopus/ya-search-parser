@@ -41,3 +41,6 @@ ya-search-parser-win32-x64/
 
 # Отчеты
 xml/
+
+# Вордстат
+settings.js

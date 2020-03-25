@@ -66,17 +66,6 @@
 <body>
     <div class="navbar">
         <div>
-            <center>
-                <label for="addressbar">Сайт:</label>
-                <br>
-                <input id="addressbar">
-            </center>
-        </div>
-        
-        <div>
-            <center>
-                <button id="go">Найти!</button>
-            </center>
             <label for="page">Страница:</label>
             <input class="right" id="page" type="number">
             <br>
@@ -85,10 +74,15 @@
         </div>
 
         <div class="queryinput_container">
-            <center style='height: calc(100% - 17px);'>
-                <label for="queryinput">Запрос:</label>
+            <center>
+                <label for="queryinput">Запросы:</label>
                 <br>
-                <input id="queryinput"></input>
+                <textarea id="queryinput"></textarea>
+                <center>
+                    <button id="go">Старт</button>
+                    <button id="pause">Стоп</button>
+                    <button id="addQuery">Добавить</button>
+                </center>
             </center>
         </div>
     </div>
