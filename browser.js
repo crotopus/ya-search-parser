@@ -22,17 +22,20 @@ const searchIntervalWaiting = 1000 * 60 * 60 // Интервал опроса с
 const ya = 'https://www.yandex.ru/'
 const search = 'search/?lr=213&text='
 
+const server_ip = '192.168.2.245'
+const server_port = '8000'
+
 let data = []
 let resNum = 0
 let viewsNum = 0
 
-let isSearching
+let isSearching = false
 let onPause
 
 let isEmptyQuery = false
 
 webview.addEventListener('ipc-message', (event) => {
-    if (Number(page.value) < Number(resultslimit.value) && currentq != undefined) {
+    if (Number(page.value) < Number(resultslimit.value)) {
         if (event.channel == 'emptyPage') {
             
         } else if (event.channel == 'noPositions') {
@@ -52,6 +55,7 @@ webview.addEventListener('ipc-message', (event) => {
             console.log('res num recieved ', resNum)
         } else if (event.channel == 'noViewsNum') {
             sendEmptyQuery()
+            setTimeout(startSearch, searchInterval)
         } else if (event.channel == 'noResNum') {
             console.log('no res number')
         }
@@ -82,7 +86,7 @@ getCurrentDate = () => {
 }
 
 getEmptyQuery = (toRun) => {
-    request.get('http://localhost:8000/query/empty', {}, 
+    request.get('http://' + server_ip + ':' + server_port + '/query/empty', {}, 
     (error, res, body) => {
         if (error) {
             console.log(error)
@@ -94,7 +98,7 @@ getEmptyQuery = (toRun) => {
 }
 
 getQueryLatest = (toRun) => {
-    request.get('http://localhost:8000/query/latest', {}, 
+    request.get('http://' + server_ip + ':' + server_port + '/query/latest', {}, 
     (error, res, body) => {
         if (error) {
             console.log(error)
@@ -106,6 +110,7 @@ getQueryLatest = (toRun) => {
 }
 
 startSearch = () => {
+   // console.log('cyka')
     page.value = 0
 
     getQueryLatest(body => {
@@ -131,7 +136,7 @@ sendQuery = () => {
         jsonObj.push({name: q.trim()})
     })
     queryinput.value = ''
-    request.post('http://localhost:8000/queries', {json: jsonObj},
+    request.post('http://' + server_ip + ':' + server_port + '/queries', {json: jsonObj},
     (error, res, body) => {
         if (error) {
             console.log(error)
@@ -146,7 +151,7 @@ sendEmptyQuery = () => {
         name: currentq,
         lastDate: getCurrentDate()
     }
-    request.put('http://localhost:8000/query/empty', {json: jsonObj},
+    request.put('http://' + server_ip + ':' + server_port + '/query/empty', {json: jsonObj},
     (error, res, body) => {
         if (error) {
             console.log(error)
@@ -161,7 +166,7 @@ sendResults = () => {
         const jsonObj = {
             name: currentq,
         }
-        request.put('http://localhost:8000/query/non-empty', {json: jsonObj},
+        request.put('http://' + server_ip + ':' + server_port + '/query/non-empty', {json: jsonObj},
         (error, res, body) => {
             if (error) {
                 console.log(error)
@@ -171,7 +176,7 @@ sendResults = () => {
         })
     }
     if (data != []) {
-        request.post('http://localhost:8000/results', {
+        request.post('http://' + server_ip + ':' + server_port + '/results', {
             json: {
                 queryName: currentq,
                 date: getCurrentDate(),

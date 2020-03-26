@@ -14,7 +14,7 @@ ipcRenderer.on('search', (event) => {
     let i = 0
     for (let node of ul) {
         if (node.attributes.length > 2 && node.attributes.length < 6
-            && node.childNodes[0].className != 'composite composite_gap_s composite_separated_no' && node.querySelector('a>b') != undefined) {
+            && node.childNodes[0].className != 'composite composite_gap_s composite_separated_no' && node.querySelector('a>b') != null && node.querySelector('h2>a') != null) {
             res.push(truncator(node.querySelector('h2>a').getAttribute('href')))
             i++
         }
@@ -37,15 +37,18 @@ ipcRenderer.on('search', (event) => {
 
 ipcRenderer.on('getViewsNum', (event) => {
     // Забираем количество показов в месяц
-    const viewsNumString = document.querySelector('.serp-adv__displayed').innerText
-    let viewsNum = Number(viewsNumString.replace(/\D/g,''))
-    if (viewsNumString.includes('тыс')) {
-        viewsNum *= 1000
-    } else if (viewsNumString.includes('млн')) {
-        viewsNum *= 1000000
-    }
-    if (viewsNum) {
-        ipcRenderer.sendToHost('saveViewsNum', viewsNum)
+    const viewsNumEl = document.querySelector('.serp-adv__displayed')
+    if (viewsNumEl) {
+        const viewsNumString = viewsNumEl.innerText
+        let viewsNum = Number(viewsNumString.replace(/\D/g,''))
+        if (viewsNumString.includes('тыс')) {
+            viewsNum *= 1000
+        } else if (viewsNumString.includes('млн')) {
+            viewsNum *= 1000000
+        }
+        if (viewsNum) {
+            ipcRenderer.sendToHost('saveViewsNum', viewsNum)
+        }
     } else {
         console.log('no views num')
         ipcRenderer.sendToHost('noViewsNum')
@@ -54,15 +57,18 @@ ipcRenderer.on('getViewsNum', (event) => {
 
 ipcRenderer.on('getResNum', (event) => {
     // Забираем количество результатов выдачи
-    const resNumString = document.querySelector('.serp-adv__found').innerHTML
-    let resNum = Number(resNumString.replace(/\D/g,''))
-    if (resNumString.includes('тыс')) {
-        resNum *= 1000
-    } else if (resNumString.includes('млн')) {
-        resNum *= 1000000
-    }
-    if (resNum) {
-        ipcRenderer.sendToHost('saveResNum', resNum)
+    const resNumEl = document.querySelector('.serp-adv__found')
+    if (resNumEl) {
+        const resNumString = resNumEl.innerHTML
+        let resNum = Number(resNumString.replace(/\D/g,''))
+        if (resNumString.includes('тыс')) {
+            resNum *= 1000
+        } else if (resNumString.includes('млн')) {
+            resNum *= 1000000
+        }
+        if (resNum) {
+            ipcRenderer.sendToHost('saveResNum', resNum)
+        }
     } else {
         console.log('no res num')
         ipcRenderer.sendToHost('noResNum')
