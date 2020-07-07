@@ -9,7 +9,7 @@
   "author": "Nikita Kiose",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^3.1.13",
+    "electron": "^7.2.4",
     "electron-packager": "^12.1.2"
   },
   "repository": {
